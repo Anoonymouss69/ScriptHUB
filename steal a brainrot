@@ -227,7 +227,7 @@ local icon = Instance.new("ImageButton", gui)
 icon.Size = UDim2.new(0, 64, 0, 64)
 icon.Position = UDim2.new(0.5, -32, 0, 30)
 icon.BackgroundTransparency = 1
-icon.Image = "rbxassetid://15288327169"
+icon.Image = "rbxassetid://15288394373"
 
 icon.MouseButton1Click:Connect(function()
 	main.Visible = not main.Visible
