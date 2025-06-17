@@ -5,7 +5,7 @@ local workspace = game:GetService("Workspace")
 
 -- GUI
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-gui.Name = "DelfiScript_UI"
+gui.Name = "Goku_UI"
 gui.ResetOnSpawn = false
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -227,7 +227,7 @@ local icon = Instance.new("ImageButton", gui)
 icon.Size = UDim2.new(0, 64, 0, 64)
 icon.Position = UDim2.new(0.5, -32, 0, 30)
 icon.BackgroundTransparency = 1
-icon.Image = "rbxassetid://15288394373"
+icon.Image = "rbxassetid://15288364523"
 
 icon.MouseButton1Click:Connect(function()
 	main.Visible = not main.Visible
