@@ -107,7 +107,8 @@ local Frame = Instance.new("Frame");
 local UICorner = Instance.new("UICorner");
 local UIGradient = Instance.new("UIGradient");
 local TitleLabel = Instance.new("TextLabel");
-local DiscordLabel = Instance.new("TextLabel");
+local DiscordBox = Instance.new("TextBox");
+local CopyButton = Instance.new("TextButton");
 local StatusLabel = Instance.new("TextLabel");
 local CreditsLabel = Instance.new("TextLabel");
 local BondsLabel = Instance.new("TextLabel");
@@ -140,18 +141,37 @@ TitleLabel.Font = Enum.Font.GothamBlack;
 TitleLabel.TextStrokeTransparency = 0.7;
 TitleLabel.TextStrokeColor3 = Color3.fromRGB(100, 100, 100);
 TitleLabel.ZIndex = 2;
-DiscordLabel.Name = "Discord";
-DiscordLabel.Parent = Frame;
-DiscordLabel.AnchorPoint = Vector2.new(0.5, 0.5);
-DiscordLabel.Size = UDim2.new(0.8, 0, 0.1, 0);
-DiscordLabel.Position = UDim2.new(0.5, 0, 0.35, 0);
-DiscordLabel.BackgroundTransparency = 1;
-DiscordLabel.Text = "discord.gg/7q2TvZ9GYX";
-DiscordLabel.TextColor3 = Color3.fromRGB(255, 255, 255);
-DiscordLabel.TextScaled = true;
-DiscordLabel.Font = Enum.Font.GothamMedium;
-DiscordLabel.TextStrokeTransparency = 0.8;
-DiscordLabel.ZIndex = 2;
+DiscordBox.Name = "Discord";
+DiscordBox.Parent = Frame;
+DiscordBox.AnchorPoint = Vector2.new(0.5, 0.5);
+DiscordBox.Size = UDim2.new(0.8, 0, 0.1, 0);
+DiscordBox.Position = UDim2.new(0.5, 0, 0.35, 0);
+DiscordBox.BackgroundTransparency = 1;
+DiscordBox.Text = "discord.gg/7q2TvZ9GYX";
+DiscordBox.TextColor3 = Color3.fromRGB(255, 255, 255);
+DiscordBox.TextScaled = true;
+DiscordBox.Font = Enum.Font.GothamMedium;
+DiscordBox.TextStrokeTransparency = 0.8;
+DiscordBox.ZIndex = 2;
+DiscordBox.TextEditable = false;
+DiscordBox.ClearTextOnFocus = false;
+DiscordBox.CursorPosition = -1;
+CopyButton.Name = "CopyButton";
+CopyButton.Parent = Frame;
+CopyButton.AnchorPoint = DiscordBox.AnchorPoint;
+CopyButton.Size = DiscordBox.Size;
+CopyButton.Position = DiscordBox.Position;
+CopyButton.BackgroundTransparency = 1;
+CopyButton.Text = "";
+CopyButton.ZIndex = DiscordBox.ZIndex + 1;
+CopyButton.MouseButton1Click:Connect(function()
+	if setclipboard then
+		setclipboard("discord.gg/7q2TvZ9GYX");
+		DiscordBox.Text = "Copied!";
+		task.wait(1.2);
+		DiscordBox.Text = "discord.gg/7q2TvZ9GYX";
+	end
+end);
 StatusLabel.Name = "Status";
 StatusLabel.Parent = Frame;
 StatusLabel.AnchorPoint = Vector2.new(0.5, 0.5);
@@ -169,7 +189,7 @@ CreditsLabel.AnchorPoint = Vector2.new(0.5, 0.5);
 CreditsLabel.Size = UDim2.new(0.8, 0, 0.08, 0);
 CreditsLabel.Position = UDim2.new(0.5, 0, 0.9, 0);
 CreditsLabel.BackgroundTransparency = 1;
-CreditsLabel.Text = "Created by SUBRAJIT & Anonymous";
+CreditsLabel.Text = "Created by SUBRAJIT &  Anonymous";
 CreditsLabel.TextColor3 = Color3.fromRGB(200, 200, 200);
 CreditsLabel.TextScaled = true;
 CreditsLabel.Font = Enum.Font.Gotham;
@@ -217,10 +237,10 @@ task.spawn(function()
 		end
 	end
 end);
-loadstring(game:HttpGet("https://raw.githubusercontent.com/hbjrev/queue.github.io/refs/heads/main/queue.lua"))();
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/newqueue.github.io/refs/heads/main/erner.lua"))();
 task.spawn(function()
 	task.wait(4);
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/hbjrev/nwhir.github.io/refs/heads/main/erj.lua"))();
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/ringtaa/unrele.github.io/refs/heads/main/roek.lua"))();
 end);
 task.spawn(function()
 	task.wait(120);
@@ -228,17 +248,27 @@ task.spawn(function()
 end);
 task.spawn(function()
 	local player = game:GetService("Players").LocalPlayer;
-	local character = player.Character or player.CharacterAdded:Wait();
-	local rootPart = character:FindFirstChild("HumanoidRootPart");
-	if not rootPart then
-		return;
-	end
-	local lastPosition = rootPart.Position;
-	while true do
-		task.wait(10);
-		if ((rootPart.Position - lastPosition).Magnitude < 5) then
-			character:FindFirstChildOfClass("Humanoid").Jump = true;
+	local function antiIdle()
+		local character = player.Character or player.CharacterAdded:Wait();
+		local rootPart = character:FindFirstChild("HumanoidRootPart");
+		if not rootPart then
+			return;
 		end
-		lastPosition = rootPart.Position;
+		local lastPosition = rootPart.Position;
+		while true do
+			task.wait(10);
+			if not rootPart.Parent then
+				break;
+			end
+			if ((rootPart.Position - lastPosition).Magnitude < 5) then
+				local humanoid = character:FindFirstChildOfClass("Humanoid");
+				if humanoid then
+					humanoid.Jump = true;
+				end
+			end
+			lastPosition = rootPart.Position;
+		end
 	end
+	antiIdle();
+	player.CharacterAdded:Connect(antiIdle);
 end);
