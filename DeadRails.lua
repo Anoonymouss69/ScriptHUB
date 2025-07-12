@@ -1,5 +1,5 @@
 -- 🌟 Load Rayfield
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local realKey = "Sweetie Fox"
 
@@ -11,10 +11,16 @@ local Window = Rayfield:CreateWindow({
         Enabled = true,
         FileName = "DeadRailsScriptHub"
     },
-    KeySystem = false
+    KeySystem = false,
+    Discord = {
+        Enabled = true,
+        Invite = "7q2TvZ9GYX",
+        RememberJoins = true
+    },
+    Logo = "https://github.com/Anoonymouss69/ScriptHUB/blob/main/hisuanpikachu.png?raw=true"
 })
 
--- 🔑 Key Tab only at start
+-- 🔑 Key Tab at start
 local KeyTab = Window:CreateTab("🔑 Key", 4483362458)
 
 KeyTab:CreateInput({
@@ -25,9 +31,9 @@ KeyTab:CreateInput({
         if text == realKey then
             Rayfield:Notify({Title="✅ Key Correct", Content="Welcome!", Duration=3})
             wait(0.5)
-            local FeaturesTab = ShowFeaturesTab() -- create features tab
+            local FeaturesTab = ShowFeaturesTab()
             KeyTab.Title = "✅ Key (Done)"
-            Window:SelectTab(FeaturesTab) -- switch view
+            Window:SelectTab(FeaturesTab)
         else
             Rayfield:Notify({Title="❌ Wrong Key", Content="Check your key or click Get Key.", Duration=3})
         end
@@ -64,40 +70,93 @@ function ShowFeaturesTab()
 
     MainTab:CreateParagraph({Title="", Content=""}) -- spacing
 
-    local FlyEnabled = false
+    -- ✅ Fixed Fly
+    local flying = false
+    local flyBV = nil
+
     MainTab:CreateToggle({
         Name = "Fly (press E)",
         CurrentValue = false,
         Callback = function(v)
-            FlyEnabled = v
-            if v then
-                local flying = false
+            flying = v
+            if flying then
                 local UIS = game:GetService("UserInputService")
-                local char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+                local player = game.Players.LocalPlayer
+                local char = player.Character or player.CharacterAdded:Wait()
                 local hrp = char:WaitForChild("HumanoidRootPart")
-                local bp, bg
+
                 UIS.InputBegan:Connect(function(input, gpe)
                     if gpe then return end
                     if input.KeyCode == Enum.KeyCode.E then
-                        flying = not flying
-                        if flying then
-                            bp = Instance.new("BodyPosition", hrp)
-                            bp.MaxForce = Vector3.new(400000,400000,400000)
-                            bp.P = 10000
-                            bp.Position = hrp.Position
-                            bg = Instance.new("BodyGyro", hrp)
-                            bg.MaxTorque = Vector3.new(400000,400000,400000)
-                            bg.CFrame = hrp.CFrame
+                        if flyBV then
+                            flyBV:Destroy()
+                            flyBV = nil
+                            Rayfield:Notify({Title="Fly", Content="Fly Off", Duration=2})
+                        else
+                            flyBV = Instance.new("BodyVelocity")
+                            flyBV.MaxForce = Vector3.new(100000,100000,100000)
+                            flyBV.Velocity = workspace.CurrentCamera.CFrame.LookVector * 50
+                            flyBV.Parent = hrp
+                            Rayfield:Notify({Title="Fly", Content="Fly On", Duration=2})
                             spawn(function()
-                                while flying and bp and bg do
-                                    bp.Position = hrp.Position + (hrp.CFrame.LookVector * 2)
-                                    bg.CFrame = workspace.CurrentCamera.CFrame
+                                while flyBV do
+                                    flyBV.Velocity = workspace.CurrentCamera.CFrame.LookVector * 50
                                     task.wait()
                                 end
                             end)
-                        else
-                            if bp then bp:Destroy() end
-                            if bg then bg:Destroy() end
+                        end
+                    end
+                end)
+            else
+                if flyBV then
+                    flyBV:Destroy()
+                    flyBV = nil
+                end
+            end
+        end
+    })
+
+    MainTab:CreateParagraph({Title="", Content=""}) -- spacing
+
+    -- 🦘 Infinite Jump
+    local IJEnabled = false
+    MainTab:CreateToggle({
+        Name = "🦘 Infinite Jump",
+        CurrentValue = false,
+        Callback = function(v)
+            IJEnabled = v
+            local UIS = game:GetService("UserInputService")
+            UIS.JumpRequest:Connect(function()
+                if IJEnabled then
+                    local player = game.Players.LocalPlayer
+                    local char = player.Character or player.CharacterAdded:Wait()
+                    local hum = char:FindFirstChildWhichIsA("Humanoid")
+                    if hum then
+                        hum:ChangeState(Enum.HumanoidStateType.Jumping)
+                    end
+                end
+            end)
+        end
+    })
+
+    MainTab:CreateParagraph({Title="", Content=""}) -- spacing
+
+    -- 🧊 Noclip
+    local NoclipEnabled = false
+    MainTab:CreateToggle({
+        Name = "🧊 Noclip",
+        CurrentValue = false,
+        Callback = function(v)
+            NoclipEnabled = v
+            if v then
+                game:GetService("RunService").Stepped:Connect(function()
+                    if NoclipEnabled then
+                        local player = game.Players.LocalPlayer
+                        local char = player.Character or player.CharacterAdded:Wait()
+                        for _, part in pairs(char:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
                         end
                     end
                 end)
@@ -119,23 +178,6 @@ function ShowFeaturesTab()
     })
 
     MainTab:CreateParagraph({Title="", Content=""}) -- spacing
-
-    MainTab:CreateButton({
-        Name = "Lag Fix",
-        Callback = function()
-            for _, obj in ipairs(workspace:GetDescendants()) do
-                if obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
-                    obj.Enabled = false
-                elseif obj:IsA("BasePart") then
-                    obj.Material = Enum.Material.SmoothPlastic
-                    obj.Reflectance = 0
-                elseif obj:IsA("Decal") or obj:IsA("Texture") then
-                    obj.Transparency = 1
-                end
-            end
-            Rayfield:Notify({Title="Lag Fix", Content="Lag reduced!", Duration=3})
-        end
-    })
 
     MainTab:CreateButton({
         Name = "FPS Boost",
@@ -160,6 +202,17 @@ function ShowFeaturesTab()
         Name = "ESP (Soon)",
         Callback = function()
             Rayfield:Notify({Title="ESP", Content="Feature coming soon!", Duration=3})
+        end
+    })
+
+    MainTab:CreateParagraph({Title="", Content=""}) -- spacing
+
+    -- 📺 YouTube
+    MainTab:CreateButton({
+        Name = "📺 Visit My YouTube",
+        Callback = function()
+            setclipboard("https://youtube.com/@scriptfarmer?si=ygLkjZhk4NCrJ_BA")
+            Rayfield:Notify({Title="YouTube", Content="Channel link copied!", Duration=3})
         end
     })
 
