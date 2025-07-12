@@ -1,5 +1,5 @@
 -- 🌟 Load Rayfield
-local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua"))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local realKey = "Sweetie Fox"
 
