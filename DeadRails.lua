@@ -2,7 +2,6 @@
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua"))()
 
 local realKey = "Sweetie Fox"
-local keyValidated = false
 
 local Window = Rayfield:CreateWindow({
     Name = "🚂 Script Hub - Dead Rails",
@@ -15,7 +14,7 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false
 })
 
--- 🔑 Key Tab only
+-- 🔑 Key Tab only at start
 local KeyTab = Window:CreateTab("🔑 Key", 4483362458)
 
 KeyTab:CreateInput({
@@ -24,10 +23,11 @@ KeyTab:CreateInput({
     RemoveTextAfterFocusLost = false,
     Callback = function(text)
         if text == realKey then
-            keyValidated = true
             Rayfield:Notify({Title="✅ Key Correct", Content="Welcome!", Duration=3})
             wait(0.5)
-            ShowFeaturesTab() -- now create the features tab
+            local FeaturesTab = ShowFeaturesTab() -- create features tab
+            KeyTab.Title = "✅ Key (Done)"
+            Window:SelectTab(FeaturesTab) -- switch view
         else
             Rayfield:Notify({Title="❌ Wrong Key", Content="Check your key or click Get Key.", Duration=3})
         end
@@ -51,7 +51,7 @@ KeyTab:CreateButton({
     end
 })
 
--- 🛠 Function to create Features tab AFTER correct key
+-- 🛠 Function to create Features tab
 function ShowFeaturesTab()
     local MainTab = Window:CreateTab("⚙️ Features", 4483362458)
 
@@ -164,4 +164,5 @@ function ShowFeaturesTab()
     })
 
     Rayfield:Notify({Title="✅ Script Hub Loaded!", Content="Made by Anonymous with help from ChatGPT", Duration=5})
+    return MainTab
 end
