@@ -15,7 +15,7 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false
 })
 
--- 🔑 Key Tab
+-- 🔑 Key Tab only
 local KeyTab = Window:CreateTab("🔑 Key", 4483362458)
 
 KeyTab:CreateInput({
@@ -26,6 +26,8 @@ KeyTab:CreateInput({
         if text == realKey then
             keyValidated = true
             Rayfield:Notify({Title="✅ Key Correct", Content="Welcome!", Duration=3})
+            wait(0.5)
+            ShowFeaturesTab() -- now create the features tab
         else
             Rayfield:Notify({Title="❌ Wrong Key", Content="Check your key or click Get Key.", Duration=3})
         end
@@ -35,7 +37,7 @@ KeyTab:CreateInput({
 KeyTab:CreateButton({
     Name = "🔑 Get Key (Linkvertise)",
     Callback = function()
-        local link = "https://linkvertise.com/your-real-link" -- replace this!
+        local link = "https://linkvertise.com/your-real-link" -- replace!
         setclipboard(link)
         Rayfield:Notify({Title="Get Key", Content="Link copied! Complete task to get your key.", Duration=5})
     end
@@ -49,140 +51,117 @@ KeyTab:CreateButton({
     end
 })
 
--- ⚙️ Features Tab
-local MainTab = Window:CreateTab("⚙️ Features", 4483362458)
+-- 🛠 Function to create Features tab AFTER correct key
+function ShowFeaturesTab()
+    local MainTab = Window:CreateTab("⚙️ Features", 4483362458)
 
-MainTab:CreateButton({
-    Name = "Auto Bonds",
-    Callback = function()
-        if keyValidated then
+    MainTab:CreateButton({
+        Name = "Auto Bonds",
+        Callback = function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/Anoonymouss69/ScriptHUB/refs/heads/main/AutoBonds"))()
-        else
-            Rayfield:Notify({Title="Key Required", Content="Enter correct key first!", Duration=3})
         end
-    end
-})
+    })
 
-MainTab:CreateParagraph({Title="", Content=""}) -- spacing
+    MainTab:CreateParagraph({Title="", Content=""}) -- spacing
 
-local FlyEnabled = false
-MainTab:CreateToggle({
-    Name = "Fly (press E)",
-    CurrentValue = false,
-    Callback = function(v)
-        if not keyValidated then
-            Rayfield:Notify({Title="Key Required", Content="Enter correct key first!", Duration=3})
-            return
-        end
-        FlyEnabled = v
-        if v then
-            local flying = false
-            local UIS = game:GetService("UserInputService")
-            local char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
-            local hrp = char:WaitForChild("HumanoidRootPart")
-            local bp, bg
-            UIS.InputBegan:Connect(function(input, gpe)
-                if gpe then return end
-                if input.KeyCode == Enum.KeyCode.E then
-                    flying = not flying
-                    if flying then
-                        bp = Instance.new("BodyPosition", hrp)
-                        bp.MaxForce = Vector3.new(400000,400000,400000)
-                        bp.P = 10000
-                        bp.Position = hrp.Position
-                        bg = Instance.new("BodyGyro", hrp)
-                        bg.MaxTorque = Vector3.new(400000,400000,400000)
-                        bg.CFrame = hrp.CFrame
-                        spawn(function()
-                            while flying and bp and bg do
-                                bp.Position = hrp.Position + (hrp.CFrame.LookVector * 2)
-                                bg.CFrame = workspace.CurrentCamera.CFrame
-                                task.wait()
-                            end
-                        end)
-                    else
-                        if bp then bp:Destroy() end
-                        if bg then bg:Destroy() end
+    local FlyEnabled = false
+    MainTab:CreateToggle({
+        Name = "Fly (press E)",
+        CurrentValue = false,
+        Callback = function(v)
+            FlyEnabled = v
+            if v then
+                local flying = false
+                local UIS = game:GetService("UserInputService")
+                local char = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+                local hrp = char:WaitForChild("HumanoidRootPart")
+                local bp, bg
+                UIS.InputBegan:Connect(function(input, gpe)
+                    if gpe then return end
+                    if input.KeyCode == Enum.KeyCode.E then
+                        flying = not flying
+                        if flying then
+                            bp = Instance.new("BodyPosition", hrp)
+                            bp.MaxForce = Vector3.new(400000,400000,400000)
+                            bp.P = 10000
+                            bp.Position = hrp.Position
+                            bg = Instance.new("BodyGyro", hrp)
+                            bg.MaxTorque = Vector3.new(400000,400000,400000)
+                            bg.CFrame = hrp.CFrame
+                            spawn(function()
+                                while flying and bp and bg do
+                                    bp.Position = hrp.Position + (hrp.CFrame.LookVector * 2)
+                                    bg.CFrame = workspace.CurrentCamera.CFrame
+                                    task.wait()
+                                end
+                            end)
+                        else
+                            if bp then bp:Destroy() end
+                            if bg then bg:Destroy() end
+                        end
                     end
+                end)
+            end
+        end
+    })
+
+    MainTab:CreateParagraph({Title="", Content=""}) -- spacing
+
+    MainTab:CreateSlider({
+        Name = "WalkSpeed",
+        Range = {16, 100},
+        Increment = 1,
+        CurrentValue = 16,
+        Callback = function(value)
+            local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+            if hum then hum.WalkSpeed = value end
+        end
+    })
+
+    MainTab:CreateParagraph({Title="", Content=""}) -- spacing
+
+    MainTab:CreateButton({
+        Name = "Lag Fix",
+        Callback = function()
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+                    obj.Enabled = false
+                elseif obj:IsA("BasePart") then
+                    obj.Material = Enum.Material.SmoothPlastic
+                    obj.Reflectance = 0
+                elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                    obj.Transparency = 1
                 end
-            end)
-        end
-    end
-})
-
-MainTab:CreateParagraph({Title="", Content=""}) -- spacing
-
-MainTab:CreateSlider({
-    Name = "WalkSpeed",
-    Range = {16, 100},
-    Increment = 1,
-    CurrentValue = 16,
-    Callback = function(value)
-        if not keyValidated then
-            Rayfield:Notify({Title="Key Required", Content="Enter correct key first!", Duration=3})
-            return
-        end
-        local hum = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
-        if hum then hum.WalkSpeed = value end
-    end
-})
-
-MainTab:CreateParagraph({Title="", Content=""}) -- spacing
-
-MainTab:CreateButton({
-    Name = "Lag Fix",
-    Callback = function()
-        if not keyValidated then
-            Rayfield:Notify({Title="Key Required", Content="Enter correct key first!", Duration=3})
-            return
-        end
-        for _, obj in ipairs(workspace:GetDescendants()) do
-            if obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
-                obj.Enabled = false
-            elseif obj:IsA("BasePart") then
-                obj.Material = Enum.Material.SmoothPlastic
-                obj.Reflectance = 0
-            elseif obj:IsA("Decal") or obj:IsA("Texture") then
-                obj.Transparency = 1
             end
+            Rayfield:Notify({Title="Lag Fix", Content="Lag reduced!", Duration=3})
         end
-        Rayfield:Notify({Title="Lag Fix", Content="Lag reduced!", Duration=3})
-    end
-})
+    })
 
-MainTab:CreateButton({
-    Name = "FPS Boost",
-    Callback = function()
-        if not keyValidated then
-            Rayfield:Notify({Title="Key Required", Content="Enter correct key first!", Duration=3})
-            return
-        end
-        for _, v in ipairs(workspace:GetDescendants()) do
-            if v:IsA("BasePart") then
-                v.Material = Enum.Material.SmoothPlastic
-            elseif v:IsA("Decal") or v:IsA("Texture") then
-                v.Transparency = 1
-            elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-                v.Enabled = false
+    MainTab:CreateButton({
+        Name = "FPS Boost",
+        Callback = function()
+            for _, v in ipairs(workspace:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.Material = Enum.Material.SmoothPlastic
+                elseif v:IsA("Decal") or v:IsA("Texture") then
+                    v.Transparency = 1
+                elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+                    v.Enabled = false
+                end
             end
+            setfpscap(60)
+            Rayfield:Notify({Title="FPS Boost", Content="FPS cap set & boost applied!", Duration=3})
         end
-        setfpscap(60)
-        Rayfield:Notify({Title="FPS Boost", Content="FPS cap set & boost applied!", Duration=3})
-    end
-})
+    })
 
-MainTab:CreateParagraph({Title="", Content=""}) -- spacing
+    MainTab:CreateParagraph({Title="", Content=""}) -- spacing
 
-MainTab:CreateButton({
-    Name = "ESP (Soon)",
-    Callback = function()
-        Rayfield:Notify({Title="ESP", Content="Feature coming soon!", Duration=3})
-    end
-})
+    MainTab:CreateButton({
+        Name = "ESP (Soon)",
+        Callback = function()
+            Rayfield:Notify({Title="ESP", Content="Feature coming soon!", Duration=3})
+        end
+    })
 
--- 📌 Credit
-Rayfield:Notify({
-    Title="✅ Script Loaded",
-    Content="Made by Anonymous with help from ChatGPT",
-    Duration=5
-})
+    Rayfield:Notify({Title="✅ Script Hub Loaded!", Content="Made by Anonymous with help from ChatGPT", Duration=5})
+end
