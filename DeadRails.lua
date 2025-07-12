@@ -16,7 +16,7 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Custom Key (change to whatever you want)
+-- Custom Key
 local CorrectKey = "Sweetie Fox"
 
 -- Create Key Tab
@@ -41,7 +41,7 @@ KeyTab:CreateButton({
                 Content = "Correct key! Loading features...",
                 Duration = 3
             })
-            ShowFeaturesTab() -- show features tab
+            ShowFeaturesTab()
         else
             Rayfield:Notify({
                 Title = "❌ Wrong Key",
@@ -98,7 +98,7 @@ function ShowFeaturesTab()
         end
     })
 
-    -- Auto Bonds button
+    -- Auto Bonds
     MainTab:CreateButton({
         Name = "💰 Auto Bonds",
         Callback = function()
@@ -191,12 +191,21 @@ function ShowFeaturesTab()
         end
     })
 
-    -- 📺 YouTube at bottom
+    -- 📺 YouTube
     MainTab:CreateButton({
         Name = "📺 Visit My YouTube",
         Callback = function()
             setclipboard("https://youtube.com/@scriptfarmer?si=ygLkjZhk4NCrJ_BA")
             Rayfield:Notify({Title="YouTube", Content="Channel link copied!", Duration=3})
+        end
+    })
+
+    -- 💬 Discord
+    MainTab:CreateButton({
+        Name = "💬 Join My Discord",
+        Callback = function()
+            setclipboard("https://discord.gg/7q2TvZ9GYX")
+            Rayfield:Notify({Title="Discord", Content="Discord invite copied!", Duration=3})
         end
     })
 
