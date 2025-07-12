@@ -1,47 +1,67 @@
 -- 🌱 Script Hub by Anonymous (with help from ChatGPT)
 
--- Load Rayfield UI
+-- Load Rayfield
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
+-- Window
 local Window = Rayfield:CreateWindow({
     Name = "🚀 Script Hub | Dead Rails",
     LoadingTitle = "Script Hub Loading...",
     LoadingSubtitle = "By Anonymous",
-    ConfigurationSaving = {
-        Enabled = false
-    },
+    ConfigurationSaving = { Enabled = false },
     Discord = {
         Enabled = true,
         Invite = "7q2TvZ9GYX",
         RememberJoins = false
-    },
-    KeySystem = true,
-    KeySettings = {
-        Title = "🔑 Script Hub Key",
-        Subtitle = "Get key to unlock features",
-        Note = "Click 'Get Key' below to open Linkvertise",
-        FileName = "ScriptHubKeyFile",
-        SaveKey = true,
-        GrabKeyFromSite = false,
-        Key = {"Sweetie Fox"}
     }
 })
 
--- 📦 Add Get Key Button in Key Tab
-Window.KeySystem:GetKeyTab():CreateButton({
-    Name = "🔑 Get Key (Linkvertise)",
-    Callback = function()
-        setclipboard("https://linkvertise.com/123456/your-key-page")
-        Rayfield:Notify({
-            Title = "Key Link",
-            Content = "Link copied to clipboard!",
-            Duration = 4
-        })
+-- Custom Key (change to whatever you want)
+local CorrectKey = "Sweetie Fox"
+
+-- Create Key Tab
+local KeyTab = Window:CreateTab("🔑 Key System", 4483362458)
+
+local userKey = ""
+KeyTab:CreateInput({
+    Name = "Enter Key",
+    PlaceholderText = "Enter your key here...",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(text)
+        userKey = text
     end
 })
 
--- ✨ Features tab
-local function ShowFeaturesTab()
+KeyTab:CreateButton({
+    Name = "✅ Submit Key",
+    Callback = function()
+        if userKey == CorrectKey then
+            Rayfield:Notify({
+                Title = "✅ Success",
+                Content = "Correct key! Loading features...",
+                Duration = 3
+            })
+            ShowFeaturesTab() -- show features tab
+        else
+            Rayfield:Notify({
+                Title = "❌ Wrong Key",
+                Content = "Please get the correct key from Linkvertise.",
+                Duration = 3
+            })
+        end
+    end
+})
+
+KeyTab:CreateButton({
+    Name = "🔑 Get Key (Linkvertise)",
+    Callback = function()
+        setclipboard("https://linkvertise.com/123456/your-key-page")
+        Rayfield:Notify({Title="Key Link", Content="Link copied to clipboard!", Duration=4})
+    end
+})
+
+-- ✨ Features tab (hidden until correct key)
+function ShowFeaturesTab()
     local MainTab = Window:CreateTab("⚙️ Features", 4483362458)
 
     -- WalkSpeed slider
@@ -180,7 +200,7 @@ local function ShowFeaturesTab()
         end
     })
 
-    -- 🛠 Coming soon label
+    -- 🛠 Coming soon
     MainTab:CreateParagraph({
         Title = "🛠 Coming Soon",
         Content = "More features will be added in future updates!"
@@ -188,6 +208,3 @@ local function ShowFeaturesTab()
 
     Rayfield:Notify({Title="✅ Script Hub Loaded!", Content="Made by Anonymous with help from ChatGPT", Duration=5})
 end
-
--- ✅ Show tab after successful key
-ShowFeaturesTab()
