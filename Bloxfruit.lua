@@ -1,5 +1,3 @@
--- _G._secondaryData = nil
--- _G.__userKey = nil
 print("✅ Security verification passed. Loading NoxHub...")
 if game.PlaceId == 2753915549 then
 	World1 = true;
